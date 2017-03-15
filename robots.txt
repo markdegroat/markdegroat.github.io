@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://markdegroat.github.io/sitemap.xml 
