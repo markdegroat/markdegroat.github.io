@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://markdegroat.github.io/blog/2017/03/14/my-first-post-on-octopress/</loc>
-<lastmod>2017-03-14T23:20:56-04:00</lastmod>
+<loc>http://markdegroat.github.io/blog/2017/03/24/my-first-post/</loc>
+<lastmod>2017-03-24T17:50:07-04:00</lastmod>
 </url>
 <url>
 <loc>http://markdegroat.github.io/blog/archives/</loc>
 </url>
 <url>
 <loc>http://markdegroat.github.io/</loc>
-</url>
-<url>
-<loc>http://markdegroat.github.io/blog/categories/flatiron-school/</loc>
 </url>
 </urlset>

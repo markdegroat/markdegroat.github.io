@@ -9,8 +9,7 @@
   <meta name="author" content="Mark deGroat">
 
   
-  <meta name="description" content="Hello World!
-">
+  <meta name="description" content="Optimizing Algorithms to Determine Primality of Number Using Ruby A few months ago I stumbled upon an interesting problem on Projecteuler, which &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +71,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2017/03/14/my-first-post-on-octopress/">My First Post on Octopress</a></h1>
+      <h1 class="entry-title"><a href="/blog/2017/03/24/my-first-post/">Eulive and Eulern</a></h1>
     
     
       <p class="meta">
@@ -81,14 +80,340 @@
 
 
 
-<time class='entry-date' datetime='2017-03-14T23:20:56-04:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>14</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>11:20 pm</span></time>
+<time class='entry-date' datetime='2017-03-24T17:50:07-04:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>5:50 pm</span></time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Hello World!</p>
+  <div class="entry-content"><h2>Optimizing Algorithms to Determine Primality of Number Using Ruby</h2>
+
+<p>A few months ago I stumbled upon an interesting problem on <a href="http:projecteuler.net">Projecteuler</a>, which hosts “challenging mathematical/computer programming problems that will require more than just mathematical insights to solve. Although mathematics will help you arrive at elegant and efficient methods, the use of a computer and programming skills will be required to solve most problems”.</p>
+
+<p>The problem was as follows:</p>
+
+<p><strong>By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
+What is the 10,001st prime number?</strong></p>
+
+<p>Because Eulerproject.net is supposed to be used as a learning tool, I am going to follow the original author’s wishes and not publish direct solutions to questions online.  But we can instead explore the core question being asked in this problem, how do you determine whether or not a number is prime?</p>
+
+<h3>Brute Force</h3>
+
+<p>Determining whether a number is prime or not appears to be relatively easy as <em>n</em> stays relatively small.  Let’s take 5 for example.  We as human beings determine if a number is prime by dividing <em>n</em> by every integer between itself and 1.  For 5, we would say</p>
+
+<p><span style="color:green">5/5 is an integer.</span></p>
+
+<p><span style="color:red">5/4 is not an integer.</span></p>
+
+<p><span style="color:red">5/3 is not an integer.</span></p>
+
+<p><span style="color:red">5/2 is not an integer.</span></p>
+
+<p><span style="color:green">5/1 is an integer.</span></p>
+
+<p>By knowing the definition of a prime number we can determine that because 5 is a prime number because it is only evenly divisible by itself and 1.  This is a feasible method while <em>n</em> stays relatively small.  But how long would it take you to tell me whether or not 472,882,027 is prime using this method?  (spoiler:A really long time and yes it’s prime.)</p>
+
+<p>Well luckily my computer is a billion times smarter than me (RIP jobs) so let’s go ahead and make a program in ruby that determines whether a number is prime in the same way a human brain would.  We can take advantage of the fact my CPU can perform computations a lot faster than a human brain can.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">is_prime?</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1">#these guys don&#39;t play by the rules</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kp">true</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">array_of_factors</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="p">(</span><span class="mi">1</span><span class="o">.</span><span class="n">.n</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span>
+</span><span class='line'>      <span class="n">array_of_factors</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">array_of_factors</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">2</span> <span class="c1">#if there are only 2 factors, it must be prime</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And let’s go ahead and add a way to track how long this thing takes to run.  I&rsquo;m using a latest generation quad-core I7, it should blaze through this no problem! We’re going to be using Ruby’s standard Benchmark library to time our program’s execution.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">n</span> <span class="o">=</span> <span class="mi">11</span>
+</span><span class='line'><span class="n">time</span> <span class="o">=</span> <span class="no">Benchmark</span><span class="o">.</span><span class="n">realtime</span> <span class="k">do</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2"> is </span><span class="si">#{</span><span class="n">is_prime?</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Time elapsed </span><span class="si">#{</span><span class="n">time</span><span class="o">*</span><span class="mi">1000</span><span class="si">}</span><span class="s2"> milliseconds&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">11</span> <span class="n">is</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Time</span> <span class="n">elapsed</span> <span class="mi">0</span><span class="o">.</span><span class="mo">032000010</span><span class="mi">83314419</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Cool!  This means our program can determine that 11 is a prime number in just .032 Milliseconds.  Let’s try larger values of <em>n</em> to see how that affects the execution time.</p>
+
+<p>When <em>n</em> = 113.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">113</span> <span class="n">is</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Time</span> <span class="n">elapsed</span> <span class="mi">0</span><span class="o">.</span><span class="mo">044</span><span class="mi">99999340623617</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 1000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">1000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Time</span> <span class="n">elapsed</span> <span class="mi">0</span><span class="o">.</span><span class="mi">11299998732283711</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 10000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">10000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Time</span> <span class="n">elapsed</span> <span class="mi">0</span><span class="o">.</span><span class="mi">7440000190399587</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 100000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">100000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Time</span> <span class="n">elapsed</span> <span class="mi">6</span><span class="o">.</span><span class="mi">9629999925382435</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 1000000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">1000000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Time</span> <span class="n">elapsed</span> <span class="mi">68</span><span class="o">.</span><span class="mi">42699996195734</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Well this isn’t looking good&hellip;</strong></p>
+
+<p>  It seems that as the size of our <em>n</em> grows, as does the execution time of our program.  Determining whether 1,000,000 is prime takes about ten times longer than determining whether or not 100,000 is prime.  We can see now that our human method for determining whether a number is prime or not is not going to be feasible when <em>n</em> gets to a certain size.  Determining whether 1,000,000,000 was prime or not would take over 60 seconds to execute, which while slow is still a reasonable amount of time to wait for an answer.  But if I were to want to check whether 1,000,000,000,000 was prime or not we’d have to wait over 16 hours for an answer.  Fine, this is still technically a feasible amount of time to wait thanks to the invention of Netflix, but what happens when we want to see if 1,000,000,000,000,000 is prime or not?  Well, with an execution time of over 666 days, we’re going to need to figure out a faster way to check whether a number is prime or not if we’re trying to have an answer by the end of 2018.</p>
+
+<h3>Optimizing our algorithm:</h3>
+
+<p>We need to take advantage of certain mathematical properties of prime numbers in order to speed up the execution time of our program.  If we look at our method for determining whether a number is prime or not, we can see we are doing some unnecessary calculations.  A number <em>n</em> is prime if the only factor from 1 to the ceiling of sqrt(n) + 1 is 1, yet we check whether or not <em>n</em> is divisible by the ceiling of sqrt(n) + 1&hellip;.n in our method #is_prime? .  Let’s change our algorithm so it only checks for factors from 1 to sqrt(n).ceiling + 1 and see how that affects the running time.</p>
+
+<p>We’ll write a new method called #improved_is_prime? :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">improved_is_prime?</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1">#these guys don&#39;t play by the rules</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;prime&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">array_of_factors</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="p">(</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="no">Math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">ceil</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span>
+</span><span class='line'>      <span class="n">array_of_factors</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">array_of_factors</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">2</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;prime&quot;</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;not prime&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The only thing that changed from the original method we wrote is the range of our for loop.  We now only check whether numbers 1 to sqrt(n).ceiling + 1 are factors, let’s take a look at how that affected the running time.</p>
+
+<p>When <em>n</em> = 10.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">10</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">original</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mo">037</span><span class="mi">999998312443495</span> <span class="n">milliseconds</span>
+</span><span class='line'><span class="mi">10</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">improved</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mo">010000017</span><span class="mi">937272787</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 100.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">100</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">original</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mo">044</span><span class="mi">99999340623617</span> <span class="n">milliseconds</span>
+</span><span class='line'><span class="mi">100</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">improved</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mo">010</span><span class="mi">999967344105244</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 1000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">1000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">original</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mi">10499998461455107</span> <span class="n">milliseconds</span>
+</span><span class='line'><span class="mi">1000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">improved</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mo">011</span><span class="mi">999974958598614</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 10000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">10000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">original</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mi">7489999989047647</span> <span class="n">milliseconds</span>
+</span><span class='line'><span class="mi">10000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">improved</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mo">01</span><span class="mi">8000020645558834</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 100000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">100000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">original</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">7</span><span class="o">.</span><span class="mi">978999987244606</span> <span class="n">milliseconds</span>
+</span><span class='line'><span class="mi">100000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">improved</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mo">04600000102072</span><span class="mi">954</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When <em>n</em> = 1000000.</p>
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">1000000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">original</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">65</span><span class="o">.</span><span class="mi">731999988202</span> <span class="n">milliseconds</span>
+</span><span class='line'><span class="mi">1000000</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">improved</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mi">0819999841041863</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see this slight modification to our method drastically improves the running time of our program, and the execution time is no longer directly related to the size of n.  Before we had to perform a million calculations in order to determine whether or not 1,000,000 was prime or not, but our new method only needs to perform sqrt(1,000,000) + 1 or 1,001 calculations in order to determine the exact same thing.</p>
+
+<p><img class="center" src="/images/line_graph_blog_1.png" width="700" height="700" title="image" alt="images"></p>
+
+<p>Let’s go ahead and see if our improved method can answer our original question, is 472,882,027 a prime number?, in a reasonable amount of time.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">n</span> <span class="o">=</span> <span class="mi">472882027</span>
+</span><span class='line'><span class="n">time</span> <span class="o">=</span> <span class="no">Benchmark</span><span class="o">.</span><span class="n">realtime</span> <span class="k">do</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2"> is </span><span class="si">#{</span><span class="n">is_prime?</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Our original method took </span><span class="si">#{</span><span class="n">time</span><span class="o">*</span><span class="mi">1000</span><span class="si">}</span><span class="s2"> milliseconds&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">time</span> <span class="o">=</span> <span class="no">Benchmark</span><span class="o">.</span><span class="n">realtime</span> <span class="k">do</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2"> is </span><span class="si">#{</span><span class="n">improved_is_prime?</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Our improved method took </span><span class="si">#{</span><span class="n">time</span><span class="o">*</span><span class="mi">1000</span><span class="si">}</span><span class="s2"> milliseconds&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">472882027</span> <span class="n">is</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">original</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">31142</span><span class="o">.</span><span class="mi">99600000959</span> <span class="n">milliseconds</span>
+</span><span class='line'><span class="mi">472882027</span> <span class="n">is</span> <span class="n">prime</span><span class="o">.</span>
+</span><span class='line'><span class="no">Our</span> <span class="n">improved</span> <span class="nb">method</span> <span class="n">took</span> <span class="mi">1</span><span class="o">.</span><span class="mi">352999999653548</span> <span class="n">milliseconds</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As the size of <em>n</em> grows, the more our optimization improves the running time of the program.  With this slight change to our original method we have made the process of determining whether or not 472,882,027 is prime over 23,000 times faster, and created a way to determine whether or not even larger values of <em>n</em> are prime in a reasonable amount of time.</p>
+
+<h3>Conclusions:</h3>
+
+<p>Exploring this topic reveals an important aspect of Computer Science.  Brute force alone cannot solve all of the world’s problems, and it is up to us as computer scientists to come up with creative solutions in order to overcome these obstacles.  Sadly, our previous solution of MOAR TRANSISTORS isn’t going to cut it unless a serious revolution occurs in the design of the modern day CPU.  Plenty of problems like prime numbers still exist today, except their “improved” solutions have yet to be found (or may never be found depending on who you’re asking).</p>
+
+<p>In future blog posts we are going to explore ways we can make this algorithm even faster, talk about some of these problems that have yet to be optimized, and dive into one of the greatest unsolved problems in mathematics, <strong>P vs. NP</strong>, so stay tuned!</p>
 </div>
   
   
@@ -109,7 +434,7 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2017/03/14/my-first-post-on-octopress/">My First Post on Octopress</a>
+        <a href="/blog/2017/03/24/my-first-post/">Eulive and Eulern</a>
       </li>
     
   </ul>

@@ -1,24 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Mark deGroat's Blog]]></title>
-  <link href="http://markdegroat.github.io/atom.xml" rel="self"/>
-  <link href="http://markdegroat.github.io/"/>
-  <updated>2017-03-27T02:43:14-04:00</updated>
-  <id>http://markdegroat.github.io/</id>
-  <author>
-    <name><![CDATA[Mark deGroat]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Eulive and Eulern - Mark deGroat's Blog</title>
+  <meta name="author" content="Mark deGroat">
 
   
-  <entry>
-    <title type="html"><![CDATA[Eulive and Eulern]]></title>
-    <link href="http://markdegroat.github.io/blog/2017/03/24/my-first-post/"/>
-    <updated>2017-03-24T17:50:07-04:00</updated>
-    <id>http://markdegroat.github.io/blog/2017/03/24/my-first-post</id>
-    <content type="html"><![CDATA[<h2>Optimizing Algorithms to Determine Primality of Number Using Ruby</h2>
+  <meta name="description" content="Optimizing Algorithms to Determine Primality of Number Using Ruby A few months ago I stumbled upon an interesting problem on Projecteuler, which &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://markdegroat.github.io/blog/2017/03/24/my-first-post/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Mark deGroat's Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mark deGroat's Blog</a></h1>
+  
+    <h2>Dark meGroat's Log</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="markdegroat.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Eulive and Eulern</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-03-24T17:50:07-04:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>5:50 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Optimizing Algorithms to Determine Primality of Number Using Ruby</h2>
 
 <p>A few months ago I stumbled upon an interesting problem on <a href="http:projecteuler.net">Projecteuler</a>, which hosts “challenging mathematical/computer programming problems that will require more than just mathematical insights to solve. Although mathematics will help you arrive at elegant and efficient methods, the use of a computer and programming skills will be required to solve most problems”.</p>
 
@@ -298,7 +364,7 @@ What is the 10,001st prime number?</strong></p>
 
 <p>As you can see this slight modification to our method drastically improves the running time of our program, and the execution time is no longer directly related to the size of n.  Before we had to perform a million calculations in order to determine whether or not 1,000,000 was prime or not, but our new method only needs to perform sqrt(1,000,000) + 1 or 1,001 calculations in order to determine the exact same thing.</p>
 
-<p><img class="center" src="http://markdegroat.github.io/images/line_graph_blog_1.png" width="700" height="700" title="image" alt="images"></p>
+<p><img class="center" src="/images/line_graph_blog_1.png" width="700" height="700" title="image" alt="images"></p>
 
 <p>Let’s go ahead and see if our improved method can answer our original question, is 472,882,027 a prime number?, in a reasonable amount of time.</p>
 
@@ -345,7 +411,95 @@ What is the 10,001st prime number?</strong></p>
 <p>Exploring this topic reveals an important aspect of Computer Science.  Brute force alone cannot solve all of the world’s problems, and it is up to us as computer scientists to come up with creative solutions in order to overcome these obstacles.  Sadly, our previous solution of MOAR TRANSISTORS isn’t going to cut it unless a serious revolution occurs in the design of the modern day CPU.  Plenty of problems like prime numbers still exist today, except their “improved” solutions have yet to be found (or may never be found depending on who you’re asking).</p>
 
 <p>In future blog posts we are going to explore ways we can make this algorithm even faster, talk about some of these problems that have yet to be optimized, and dive into one of the greatest unsolved problems in mathematics, <strong>P vs. NP</strong>, so stay tuned!</p>
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-</feed>
+
+<span class="byline author vcard">Posted by <span class="fn">Mark deGroat</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2017-03-24T17:50:07-04:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>5:50 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://markdegroat.github.io/blog/2017/03/24/my-first-post/" data-via="" data-counturl="http://markdegroat.github.io/blog/2017/03/24/my-first-post/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/03/24/my-first-post/">Eulive and Eulern</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - Mark deGroat -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
