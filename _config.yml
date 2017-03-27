@@ -3,11 +3,17 @@
 # ----------------------- #
 
 url: http://markdegroat.github.io
+<<<<<<< HEAD
 title: My Octopress Blog
 subtitle: A blogging framework for hackers.
 author: Your Name
+=======
+title: Mark deGroat's Blog
+subtitle: Dark meGroat's Log
+author: Mark deGroat
+>>>>>>> 898d22b80d9fed90751c9f829a577d037e1fe0b1
 simple_search: https://www.google.com/search
-description:
+description: A blog that chronicles my journey through the land of web development.
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
