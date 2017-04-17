@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://markdegroat.github.io/blog/2017/04/16/database-normalization-a-surface-glance-at-1nf/</loc>
+<lastmod>2017-04-16T12:50:11-04:00</lastmod>
+</url>
+<url>
 <loc>http://markdegroat.github.io/blog/2017/03/24/my-first-post/</loc>
 <lastmod>2017-03-24T17:50:07-04:00</lastmod>
 </url>

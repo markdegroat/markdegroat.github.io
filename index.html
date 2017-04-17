@@ -9,7 +9,7 @@
   <meta name="author" content="Mark deGroat">
 
   
-  <meta name="description" content="Optimizing Algorithms to Determine Primality of Number Using Ruby A few months ago I stumbled upon an interesting problem on Projecteuler, which &hellip;">
+  <meta name="description" content="Database Normalization What is database normalization? Database Normalization is the process of organizing columns and tables in such a way to reduce &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,6 +71,170 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2017/04/16/database-normalization-a-surface-glance-at-1nf/">Database Normalization: A Surface Glance at 1NF and 2NF</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-04-16T12:50:11-04:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>12:50 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>Database Normalization</h1>
+
+<h2>What is database normalization?</h2>
+
+<p>Database Normalization is the process of organizing columns and tables in such a way to reduce data redundancy and improve data integrity.  It is a way to simplify the design of a database so that everyone and anyone is able to set up a new database to achieve the most optimal structure that we have currently come up with.</p>
+
+<p>(Side Note:  Did you know that markdown doesn&rsquo;t support tables?  Hence my super old school ASCII art tables.)</p>
+
+<h2>A Non Normalized Database example</h2>
+
+<p><img class="center" src="/images/db_1.png" width="700" height="700" title="image" alt="images"></p>
+
+<h2>Why do we do it?</h2>
+
+<p>In our example above, you can see that for each row that represents a Sales Rep, we are also storing the Sales Office they work in, and the phone number for that particular office.  Employees 1 and 3 both work in the same office, and in order to represent that with our current database design we had to store that information twice.
+When we duplicate information we are not only are wasting space in our database but we are also setting ourselves up to run into problems down the line when trying to perform certain actions on our database.</p>
+
+<p>In order to understand why we normalize a database, let&rsquo;s take a look at some of the things that can go wrong if we don&rsquo;t.</p>
+
+<p>
+  <strong>Update Anomaly</strong>
+</p>
+
+
+<p>  What would happen if the Office Number for the New York office changes?
+  With our current database design, we&rsquo;d have to update the Office Number for every row where the Office Location is New York.  It&rsquo;d be much more efficient to only have to update the phone number one time, rather than have to update multiple columns in your database.
+  <img class="center" src="/images/db_2.png" width="700" height="700" title="image" alt="images"></p>
+
+<p>  <p>
+    <strong>Insert Anomaly</strong>
+  </p>
+    What would happen if we opened a new office in Chicago and wanted to store that new office location&rsquo;s phone number?  With our current setup, we cannot add a new office location unless we also record a new employee.  Every new record needs a &ldquo;Primary Key&rdquo; and because we are using &ldquo;Employee ID&rdquo; as the primary key, we need a new Employee ID in order to save this new phone number.<br/>
+    <img class="center" src="/images/db_3.png" width="700" height="700" title="image" alt="images"></p>
+
+<p>  <p>
+    <strong>Deletion Anomaly</strong>
+  </p>
+    Turns out our employee &ldquo;Mary Martin&rdquo; has just been found guilty of embezzling millions from our company and has been fired.  Let&rsquo;s go ahead and delete her from the database.
+    <img class="center" src="/images/db_4.png" width="700" height="700" title="image" alt="images">
+    Someone should call our San Francisco office to let them know about Mary.  We&rsquo;ll just look up their number from our database and&hellip;
+    Oh no! When we delete the row pertaining to &ldquo;Mary Martin&rdquo;, we also deleted our Office Number for the San Francisco office.  A normalized database would store these Office Locations and their respective numbers in such a way that when we delete an employee that works at that location, we still have access to that location&rsquo;s information, even if there are not currently any employees working there.</p>
+
+<p>  <p>
+    <strong>Searching Difficulties and Horizontal Growth</strong>
+  </p>
+    We can see in our non-normalized database, each employee has to have a new row created in order to store a new customer.  This presents a couple problems.  First, our current structure only allows each employee to have a max of 3 customers.  If an employee had more than 3, we&rsquo;d have to add an entire new column to our database for each new customer.
+    <img class="center" src="/images/db_5.png" width="700" height="700" title="image" alt="images">
+    As the number of customers each employee has grows, our database has to grow horizontally in order to store these new customers.  This is <strong>not</strong> what we want.
+    Furthermore, how would we query our database for a specific customer using SQL?  We&rsquo;d have to set up a query like this:</p>
+
+<pre><code class="`` SQL">  SELECT *
+  FROM Employees
+  WHERE Customer1 = 'Google' OR
+  WHERE Customer2 = 'Google' OR
+  WHERE Customer3 = 'Google' OR
+  WHERE Customer4 = 'Google' OR
+  WHERE Customer5 = 'Google'
+</code></pre>
+
+<p>  But everytime we added a new row for a new customer, we&rsquo;d also have to modify our search query in order to also search this new row.  This isn&rsquo;t efficient.</p>
+
+<h2>1st Normal Form (1NF)</h2>
+
+<p>The rules that your database design needs to follow in order to be considered in &ldquo;First Normal Form&rdquo; is:</p>
+
+<ul>
+  <li>The table stores information in rows and columns where the one or more columns uniquely identify each row.
+  <li> Each column contains atomic values, and there are not repeating groups of columns.
+</ul>
+
+
+<p>Atomic values are values that cannot be further subdivided.  &ldquo;Google&rdquo; is an atomic value because it refers to one customer, but a column called &ldquo;Customers&rdquo; which contained all the customer for an employee delimited by commas, &ldquo;Google,Apple,Gerber&rdquo; , would not be atomic because that one value in the table actually represents three different customers.  This extends to another requirement which is that a table should not contain repeating groups of columns, such as the Customer1, Customer2, etc. columns we have in our table.</p>
+
+<p><p>
+Let&rsquo;s go ahead and redesign our database in such a way that we satisfy the rules of 1NF.
+<img class="center" src="/images/db_6.png" width="700" height="700" title="image" alt="images"></p>
+
+<p>We have now created a separate table, Customers, so that there are no longer repeating customer columns.  This will make sure our database grows vertically as new customers are added, not horizontally as it did in our non normalized design.</p>
+
+<p>What did this do for us?
+Well, now every time we want to add a new customer for an employee we simply add a new row to our customer table and use the Employee ID column to associate it to the correct employee.  We no longer run into the insertion anomaly we encountered with our original database design when trying to add new customers to the databse.</p>
+
+<p>The deletion anomaly is also no longer an issue for this new database design, at least in terms of Employees being related to customers.  We can delete a customer from the database without having to delete the entire employee.</p>
+
+<h2>2nd Normal Form (2NF)</h2>
+
+<p>The rules that your database design needs to follow in order to be considered in &ldquo;Second Normal Form&rdquo; is:
+<ul>
+  <li>The table is in 1NF.
+  <li> All the non-key columns are dependent on the table&rsquo;s primary key (which in our example is Employee ID).
+</ul>
+If we take a look at our table in 1NF, we see that there are columns that are not dependent on the table&rsquo;s primary key, Office Name and Office Number.  Even though these two columns describe where the Employee is located and how to contact that location, the columns themselves don&rsquo;t describe who the <strong>Employee</strong> is.  We need to put this data into another table that is then referenced by the Employee table.  We are also storing the Customer&rsquo;s name for the table that joins an Employee to a Customer.  We should separate this out into it&rsquo;s own table so that if two employees have the same customer, the name would not be stored twice.</p>
+
+<p><img class="center" src="/images/db_7.png" width="700" height="700" title="image" alt="images">
+We have now almost completely eliminated redundancy.  Remember our update anomaly we ran into before?  Now if we needed to update the office number for our San Francisco office, we only need to make <strong>one</strong> update to our table, while before we would have had to update it everywhere it appeared in the 1NF of the customer table.</p>
+
+<p>The point of 2NF is that each table serves a single purpose.  Before, our Employees table was not only storing information about an employee, but also information about the contact information for a particular location.  By making our database design conform to 2NF, we separated this into two tables, one that stores information strictly about the employee, and another which stores information about an office.  We then simply add a foreign key to the Employee table that references which row from the Office table they should correspond to.</p>
+
+<h2>3rd Normal Form (3NF)</h2>
+
+<p>The rules that your database design needs to follow in order to be considered in &ldquo;Second Normal Form&rdquo; is:
+<ul>
+  <li>The table is in 2NF.
+  <li> For a relation table R, every non-prime attribute of R is non-transitively dependent on every key of R.
+</ul></p>
+
+<p>Well, what does non-transitively dependent mean?  The best definition I could find was &ldquo;A column&rsquo;s value relies upon another column through a second intermediate column.&rdquo;</p>
+
+<p>Let&rsquo;s formalize this definition by using a 3 column table as our example.
+For three columns, A, B and the Primary Key.  If the value of A relies on the Primary Key, and the value of B relies on A, then it is true that B relies on the Primary Key <strong>through A</strong>.</p>
+
+<p>Let&rsquo;s use this new table to explain this further:
+<img class="center" src="/images/db_8.png" width="700" height="700" title="image" alt="images">
+Let PK = Office ID, A = Zip code and B = Office Location.
+A, the zip code, relies on the primary key because the zip code is a representation of where that Office is located.  B, the office location, relies on A because the zip code points to the city in which the office is located.  Because of this, A relies on the Primary Key through B.</p>
+
+<p>In order for this table to conform to 3NF, we need to have the zip code point to the office location in a separate table.
+<img class="center" src="/images/db_9.png" width="700" height="700" title="image" alt="images"></p>
+
+<p>Now, every non-prime attribute of our table is non-transitively dependent on every key for our table.</p>
+
+<p>Let&rsquo;s look at another example from this site:
+<a href="http://www.1keydata.com/database-normalization/third-normal-form-3nf.php">http://www.1keydata.com/database-normalization/third-normal-form-3nf.php</a>
+<img class="center" src="/images/db_10.png" width="700" height="700" title="image" alt="images">
+Our original table, &ldquo;TABLE_BOOK_DETAIL&rdquo; has both a &ldquo;Genre ID&rdquo; and &ldquo;Genre Type&rdquo; column.  Book ID, which we will refer to as the primary key, is used to determine the Genre ID.  Then the Genre ID is used to determine the Genre Type column.  Because of this, we can see that the Primary Key determines the Genre Type <strong>through Genre ID</strong>.  This violates our second rule of 3NF, and thus we need to separate out Genre Type into it&rsquo;s own table which is referenced by the Genre ID.
+<img class="center" src="/images/db_11.png" width="700" height="700" title="image" alt="images"></p>
+
+<h2>Conclusions&hellip;</h2>
+
+<h2>Work in progress&hellip;</h2>
+
+<p>To be added:
+BCNF
+4NF
+5NF
+Why Normalization is not always necessary and when to use it.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2017/03/24/my-first-post/">Eulive and Eulern</a></h1>
     
     
@@ -87,7 +251,7 @@
   </header>
 
 
-  <div class="entry-content"><h2>Optimizing Algorithms to Determine Primality of Number Using Ruby</h2>
+  <div class="entry-content"><h2>Optimizing Algorithm to Determine Primality of Number Using Ruby</h2>
 
 <p>A few months ago I stumbled upon an interesting problem on <a href="http:projecteuler.net">Projecteuler</a>, which hosts “challenging mathematical/computer programming problems that will require more than just mathematical insights to solve. Although mathematics will help you arrive at elegant and efficient methods, the use of a computer and programming skills will be required to solve most problems”.</p>
 
@@ -432,6 +596,10 @@ What is the 10,001st prime number?</strong></p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/04/16/database-normalization-a-surface-glance-at-1nf/">Database Normalization: A Surface Glance at 1NF and 2NF</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2017/03/24/my-first-post/">Eulive and Eulern</a>
