@@ -200,6 +200,120 @@ It is important to note though that using #where(&rdquo;&hellip;&ldquo;), #conne
 
 <h1>A Historical Example of Another Kind of Injection</h1>
 
+<p>&ldquo;Phreaking is a slang term coined to describe the activity of a culture of people who study, experiment with, or explore telecommunication systems, such as equipment and systems connected to public telephone networks.&rdquo; - <a href="https://en.wikipedia.org/wiki/Phreaking">https://en.wikipedia.org/wiki/Phreaking</a></p>
+
+<p>Telecommunication systems used to use &ldquo;in-band signaling&rdquo; in order to send control messages to their systems via a phone line.
+They set certain frequencies to mean certain things, so if I sent a 2000hz tone it might mean &ldquo;prepare call for routing&rdquo; while a 2400hz tone might be interpreted by the system as &ldquo;disconnect caller&rdquo;.  In band signaling means that these control tones were sent on the same channel that voice data was sent.  Just like API&rsquo;s have endpoints which fire different methods or functions on a webserver in order to generate a result, these control tones are the &ldquo;endpoints&rdquo; of the telecommunication system.</p>
+
+<p>Let&rsquo;s look at a frequency detection script I wrote using Python to visualize how this might work:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class='Python'><span class='line'><span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;markdegroat&#39;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">pyaudio</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">wave</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">time</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">timeit</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">chunkToAnalyze</span> <span class="o">=</span> <span class="mi">1024</span>
+</span><span class='line'><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Plays a wave file.</span><span class="se">\n\n</span><span class="s">Usage: </span><span class="si">%s</span><span class="s"> filename.wav&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span class='line'>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="c"># instantiate PyAudio (1)</span>
+</span><span class='line'><span class="n">p</span> <span class="o">=</span> <span class="n">pyaudio</span><span class="o">.</span><span class="n">PyAudio</span><span class="p">()</span>
+</span><span class='line'><span class="n">wav</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">sampleWidth</span> <span class="o">=</span> <span class="n">wav</span><span class="o">.</span><span class="n">getsampwidth</span><span class="p">()</span>
+</span><span class='line'><span class="n">sampleRate</span> <span class="o">=</span> <span class="n">wav</span><span class="o">.</span><span class="n">getframerate</span><span class="p">()</span>
+</span><span class='line'><span class="n">sampleChannels</span> <span class="o">=</span> <span class="n">wav</span><span class="o">.</span><span class="n">getnchannels</span><span class="p">()</span>
+</span><span class='line'><span class="c">#Use a windowing function to eliminate leakage that is not the dom freq</span>
+</span><span class='line'><span class="c">#windowing function is taken from the numpy library</span>
+</span><span class='line'><span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">blackman</span><span class="p">(</span><span class="n">chunkToAnalyze</span><span class="p">)</span>
+</span><span class='line'><span class="n">stream</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get_format_from_width</span><span class="p">(</span><span class="n">wav</span><span class="o">.</span><span class="n">getsampwidth</span><span class="p">()),</span>
+</span><span class='line'>        <span class="n">channels</span><span class="o">=</span><span class="n">sampleChannels</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">rate</span><span class="o">=</span><span class="n">sampleRate</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">output</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'><span class="c">#begin to analyze chunk</span>
+</span><span class='line'><span class="n">data</span> <span class="o">=</span> <span class="n">wav</span><span class="o">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">chunkToAnalyze</span><span class="p">)</span>
+</span><span class='line'><span class="c">#play stream and find the frequency of each chunk</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#this step writes data out to the audio stream</span>
+</span><span class='line'><span class="c"># unpack the data and times by the hamming window</span>
+</span><span class='line'><span class="n">indata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wave</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%d</span><span class="s">h&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">/</span><span class="n">sampleWidth</span><span class="p">),</span>\
+</span><span class='line'>                                     <span class="n">data</span><span class="p">))</span><span class="o">*</span><span class="n">window</span>
+</span><span class='line'><span class="c"># Take the fft and square each value</span>
+</span><span class='line'><span class="n">fftData</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">indata</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+</span><span class='line'><span class="c"># find the maximum, aka find the bin with the most &quot;hits&quot;</span>
+</span><span class='line'><span class="n">which</span> <span class="o">=</span> <span class="n">fftData</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'><span class="n">detectedFrequency</span> <span class="o">=</span> <span class="n">which</span><span class="o">*</span><span class="n">sampleRate</span><span class="o">/</span><span class="n">chunkToAnalyze</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;The freq is estimated to be about </span><span class="si">%f</span><span class="s"> Hz.&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">detectedFrequency</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">detectedFrequency</span> <span class="o">&gt;</span> <span class="mi">2550</span> <span class="o">&amp;&amp;</span> <span class="n">detectedFrequency</span> <span class="o">&lt;</span> <span class="mi">2650</span><span class="p">){</span>
+</span><span class='line'>  <span class="c"># END CALL</span>
+</span><span class='line'>  <span class="c">#Here we would send a message to the telecommunication system</span>
+</span><span class='line'>  <span class="c">#to hang up the line</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">detectedFrequency</span> <span class="o">&gt;</span> <span class="mi">4550</span> <span class="o">&amp;&amp;</span> <span class="n">detectedFrequency</span> <span class="o">&lt;</span> <span class="mi">4650</span><span class="p">){</span>
+</span><span class='line'>  <span class="c"># END CALL</span>
+</span><span class='line'>  <span class="c">#Here we would send a message to the telecommunication system</span>
+</span><span class='line'>  <span class="c">#to prepare the line for a new call</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
 <p><a href="https://en.wikipedia.org/wiki/John_Draper#Phreaking">https://en.wikipedia.org/wiki/John_Draper#Phreaking</a></p>
 
 <p><a href="http://mentalfloss.com/article/19484/true-crime-john-draper-original-whistle-blower">http://mentalfloss.com/article/19484/true-crime-john-draper-original-whistle-blower</a></p>
