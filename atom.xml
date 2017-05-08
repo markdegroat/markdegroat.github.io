@@ -4,7 +4,7 @@
   <title><![CDATA[Mark deGroat's Blog]]></title>
   <link href="http://markdegroat.github.io/atom.xml" rel="self"/>
   <link href="http://markdegroat.github.io/"/>
-  <updated>2017-04-17T14:31:25-04:00</updated>
+  <updated>2017-05-08T09:12:08-04:00</updated>
   <id>http://markdegroat.github.io/</id>
   <author>
     <name><![CDATA[Mark deGroat]]></name>
@@ -14,7 +14,137 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Database Normalization: A Surface Glance at 1NF and 2NF]]></title>
+    <title type="html"><![CDATA[Protecting Against SQL Injection in Rails]]></title>
+    <link href="http://markdegroat.github.io/blog/2017/05/07/apis-in-rails-5/"/>
+    <updated>2017-05-07T18:22:40-04:00</updated>
+    <id>http://markdegroat.github.io/blog/2017/05/07/apis-in-rails-5</id>
+    <content type="html"><![CDATA[<p>In March of 2008, Heartland Payment System was the victim of a data breach which lead to 134 million credit cards being exposed.  The attackers used SQL injection to install spyware on Heartland&rsquo;s data systems.  The vulnerability the attackers exploited was nothing new to security experts, yet the company still fell victim to this attack.</p>
+
+<p>Whether you&rsquo;re storing pictures of cats or credit card information of millions of different users, eventually once your platform gets big enough someone is going to try and break it.  The attacker might be a bored twelve year old who downloaded some scripts off of a deep web forum or a team of trained security experts in China attacking your site for political reasons.  Whoever it may, and for whatever reason they&rsquo;re trying to get in, it&rsquo;s our job as web developers to make our application as resilient as possible to these attacks.</p>
+
+<p>From: <a href="http://guides.rubyonrails.org/security.html#injection">http://guides.rubyonrails.org/security.html#injection</a></p>
+
+<h2>So, what is a SQL injection anyways?</h2>
+
+<p>A SQL injection is when an end user manipulates database queries being performed on the backend by manipulating the parameters that are sent to the web server.  Usually this is done by sending a string via a form that &ldquo;tricks&rdquo; the web server into firing SQL statements it did not originally intend to.</p>
+
+<p>A common goal for a malicious end user would be to bypass authorization so they could get access without knowing a correct username or password.</p>
+
+<p>Let&rsquo;s pretend we&rsquo;re checking the parameters sent by a web request in order to authenticate a user, which is handled by the create action of our SessionsController.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">new</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">create</span>
+</span><span class='line'>    <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find_by</span><span class="p">(</span><span class="s2">&quot;login = &#39;</span><span class="si">#{</span><span class="n">params</span><span class="o">[</span><span class="ss">:name</span><span class="o">]</span><span class="si">}</span><span class="s2">&#39; AND password = &#39;</span><span class="si">#{</span><span class="n">params</span><span class="o">[</span><span class="ss">:password</span><span class="o">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">user</span>
+</span><span class='line'>      <span class="n">redirect_to</span> <span class="ss">:super_secret_documents</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="n">render</span> <span class="ss">:login</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">destroy</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and then let&rsquo;s pretend we have a simple login form that looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;/create&quot;</span> <span class="na">method=</span><span class="s">&quot;POST&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  First name:<span class="nt">&lt;br&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;username&quot;</span><span class="nt">&gt;&lt;br&gt;</span>
+</span><span class='line'>  Last name:<span class="nt">&lt;br&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="nt">&gt;&lt;br&gt;&lt;br&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">value=</span><span class="s">&quot;Submit&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;/form&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, our end user is a big ol' jerk and decides to try and bypass our basic authentication procedure.
+By entering</p>
+
+<h3>&lsquo; OR '1&rsquo;=&lsquo;1</h3>
+
+<p>as their username and</p>
+
+<h3>&lsquo; OR '2&rsquo;>&lsquo;1</h3>
+
+<p>as their password.
+Now, when these malicious parameters are passed into our User.find_by method in the create action of our SessionsController, the resulting SQL query will be:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='SQL'><span class='line'><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">login</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">OR</span> <span class="s1">&#39;1&#39;</span><span class="o">=</span><span class="s1">&#39;1&#39;</span> <span class="k">AND</span> <span class="n">password</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">OR</span> <span class="s1">&#39;2&#39;</span><span class="o">&gt;</span><span class="s1">&#39;1&#39;</span> <span class="k">LIMIT</span> <span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>TODO put in kid giving thumbs up gif</p>
+
+<p>This sql query will ALWAYS return true, as now the query think it needs to check if the login is correct, OR if 1 is equal to one, which will always equate to true.  Similarly with the password parameter, the resulting SQL query is now checking whether the correct password was entered OR if 2 is greater than 1, which will also always equate to true.</p>
+
+<p>Bypassing authentication is just one of the many things that can be accomplished with SQL injection.  By being creative with what you try and enter into input fields, an end user can do a number of malicious things to your database.</p>
+
+<h1>Security Features of Rails</h1>
+
+<p>Luckily, Rails has a number of built in security measures to prevent situations like the one we just looked at from occurring.
+Rails has a built-in filter for special SQL characters, it escapes the &lsquo;, &ldquo; , NULL character and line breaks.  Whenever you use #Model.find(id) or #Model.find_by_something(something) this security feature is automatically applied.
+It is important to note though that using #where(&rdquo;&hellip;&ldquo;), #connection.execute() or Model.find_by_sql() does NOT apply this security measure, as Rails is assuming you are going to sanitize the input yourself.  If this security feature was implemented, it would make these methods behave extremely strangely.</p>
+
+<p>One way to easily sanitize this input is to pass an array or hash to the #where method instead of doing string interpolation.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Model</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="s2">&quot;login = ? AND password = ?&quot;</span><span class="p">,</span> <span class="n">entered_user_name</span><span class="p">,</span> <span class="n">entered_password</span><span class="p">)</span><span class="o">.</span><span class="n">first</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">OR</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Model</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="ss">login</span><span class="p">:</span> <span class="n">entered_user_name</span><span class="p">,</span> <span class="ss">password</span><span class="p">:</span> <span class="n">entered_password</span><span class="p">)</span><span class="o">.</span><span class="n">first</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>A Historical Example of Another Kind of Injection</h1>
+
+<p><a href="https://en.wikipedia.org/wiki/John_Draper#Phreaking">https://en.wikipedia.org/wiki/John_Draper#Phreaking</a></p>
+
+<p><a href="http://mentalfloss.com/article/19484/true-crime-john-draper-original-whistle-blower">http://mentalfloss.com/article/19484/true-crime-john-draper-original-whistle-blower</a></p>
+
+<p>sources:
+<a href="http://www.dotnettricks.com/learn/webapi/what-is-web-api-and-why-to-use-it-">http://www.dotnettricks.com/learn/webapi/what-is-web-api-and-why-to-use-it-</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Database Normalization: A Surface Glance at 1NF ,2NF and 3NF]]></title>
     <link href="http://markdegroat.github.io/blog/2017/04/16/database-normalization-a-surface-glance-at-1nf/"/>
     <updated>2017-04-16T12:50:11-04:00</updated>
     <id>http://markdegroat.github.io/blog/2017/04/16/database-normalization-a-surface-glance-at-1nf</id>
