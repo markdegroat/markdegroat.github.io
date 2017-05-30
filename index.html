@@ -9,7 +9,7 @@
   <meta name="author" content="Mark deGroat">
 
   
-  <meta name="description" content="In March of 2008, Heartland Payment System was the victim of a data breach which lead to 134 million credit cards being exposed. The attackers used &hellip;">
+  <meta name="description" content="A turing machine is an abstract model of computation used to formally define what it means for a function to be computable. As you will see shortly &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,229 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2017/05/29/turing-machines-and-the-halting-problem/">Turing Machine's and the Halting Problem</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-05-29T14:29:30-04:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>2:29 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><img src="https://upload.wikimedia.org/wikipedia/en/b/be/Turing_machine_from_Boolos_and_Jeffrey.JPG"></p>
+
+<h3>A turing machine is an abstract model of computation used to formally define what it means for a function to be computable.  As you will see shortly the model of a turing machine is simple, but given any computer algorithm, a Turing machine can be created that is capable of simulating that alorithm&rsquo;s logic.</h3>
+
+<h4>It consists of:</h4>
+
+<p><strong>An infinitely long tape</strong> which serves as the memory for the machine.  The tape consists of squares which are usually blank at the start and can be written with symbols.</p>
+
+<p><strong>A read/write &ldquo;head&rdquo; </strong>which is positioned over one of the squares on the tape.<br/>
+The head is capable of three basic operations:</p>
+
+<ol>
+    <li>Reading the symbol on the tape</li>
+    <li>Editing the symbol on the tape by writing a new symbol or erasing it.</li>
+    <li>Moving the tape left or right by one square so that the turing machine can read or edit the neighbouring symbols.</li>
+</ol>
+
+
+<p>That&rsquo;s it!
+<img src="http://danielschlegel.org/teaching/111/images/physicaltm.PNG"></p>
+
+<p>A turing machine is given a set of instructions that tell it what actions to perform based on the given input on the tape.<br/>
+The action that a Turing Machine is going to take is determined by the current state of the machine, the symbol in the cell currently being scanned by the read/write head and a table of transition rules.  These transition rules can be thought of as &ldquo;programs&rdquo; that the Turing Machine then runs.</p>
+
+<p>Here&rsquo;s what some simple instructions look like, taken from a rasberry pi overview published by University of Cambridge:</p>
+
+<p><img class="center" src="/images/turing_1.png" width="700" height="700" title="image" alt="images"></p>
+
+<p>We could write these instructions as such:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  Read Symbol  //it's blank
+</span><span class='line'>  Write 1
+</span><span class='line'>  Move Head Right
+</span><span class='line'>  Read Symbol //it's blank
+</span><span class='line'>  Write 1
+</span><span class='line'>  Move Head Right
+</span><span class='line'>  Write 0
+</span><span class='line'>  HALT</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This example is pretty boring though, what if something was <strong>already</strong> written on the tape?</p>
+
+<p>Here&rsquo;s a program that creates the binary inverse of a binary number written on the tape. (The binary inverse of 110 would be 001).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>START
+</span><span class='line'>  IF READ SYMBOL == 1
+</span><span class='line'>    WRITE 0
+</span><span class='line'>    MOVE HEAD LEFT
+</span><span class='line'>    GO TO START
+</span><span class='line'>  IF READ SYMBOL == 0
+</span><span class='line'>    WRITE 1
+</span><span class='line'>    MOVE HEAD LEFT
+</span><span class='line'>    GO TO START
+</span><span class='line'>  IF READ SYMBOL == BLANK
+</span><span class='line'>    HALT
+</span><span class='line'>  GO TO START
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img class="center" src="/images/turing_2.png" width="700" height="700" title="image" alt="images"></p>
+
+<p>We&rsquo;re writing some pretty sketchy pseudo code to represent the instructions given to a Turing Machine.  Usually, instructions are represented using state transition diagrams.  Here&rsquo;s an example of a set of instructions that adds one to a unary representation of a number.  It also has a good explanation of how a state transition diagram represents the different instructions:
+<img class="center" src="/images/turing_3.png" width="700" height="700" title="image" alt="images"></p>
+
+<h3>Now let&rsquo;s see that program run in real time:</h3>
+
+<p><img src="https://plato.stanford.edu/entries/turing-machine/animated-addone.gif"></p>
+
+<h3>Why have I never seen one of these Turing Machine&rsquo;s before?</h3>
+
+<p>Well, a Turing Machine is really just a hypothetical machine used as a model to prove certain limits on mechanical computation. But, it is possible to build one if you really wanted.</p>
+
+<p>Now that we understand what a Turing Machine, let&rsquo;s take a look at&hellip;</p>
+
+<h2>The Halting Problem</h2>
+
+<p>In computability theory, the halting problem is the problem of determining, from a description of an arbitrary computer program and an input, whether the program will finish running or continue to run forever.
+<a href="https://en.wikipedia.org/wiki/Halting_problem">https://en.wikipedia.org/wiki/Halting_problem</a></p>
+
+<p>In other words, can you write a program that given some computer and some other program as parameters, could tell you whether the given program would run forever on that computer, or at some point would stop and give you an answer.</p>
+
+<p>Hm&hellip; it&rsquo;s starting to make sense why all these famous computer scientists look like dead heads.</p>
+
+<h3>Well, let&rsquo;s try and prove this.</h3>
+
+<p>First, we&rsquo;ll assume that we DO have some program that can achieve this feat.  We can give it a program and a computer, and it will tell us whether that program will run forever or not.  We&rsquo;ll call it &ldquo;Does it halt?&rdquo;, represented by the weird diamond boxy thing below and trust that it returns either a true or false value.</p>
+
+<p><img src="https://qph.ec.quoracdn.net/main-qimg-37733f741cd68230cb83dda0fdeb6795.webp"></p>
+
+<p>If I gave this weird diamond box thingy this program in BASIC as a parameter:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='basic'><span class='line'><span class="nl">10</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;HELLO WORLD&quot;</span>
+</span><span class='line'><span class="nl">20</span><span class="w"> </span><span class="vg">GO</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="il">10</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<center>|</center>
+
+
+<center>v</center>
+
+
+<center><img src="https://qph.ec.quoracdn.net/main-qimg-37733f741cd68230cb83dda0fdeb6795.webp"></center>
+
+
+<center>|</center>
+
+
+<center>v</center>
+
+
+<center>FALSE</center>
+
+
+<p>In other words, if we represent it as a function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='basic'><span class='line'><span class="vg">program_as_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="c1">&#39;10 PRINT &quot;HELLO WORLD&quot; 20 GO TO 10&#39;</span>
+</span><span class='line'><span class="vg">doesItHalt</span><span class="p">(</span><span class="vg">program_as_string</span><span class="p">)</span>
+</span><span class='line'><span class="o">&gt;</span><span class="vg">false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Alright, this is where things get weird&hellip;</p>
+
+<p>Now, imagine we made this little magical &ldquo;Does It Halt?&rdquo; program a piece of a bigger program?  Let&rsquo;s make it that if the &ldquo;Does It Halt?&rdquo; algorithm returns true, then we make our new program loop forever.  But if it returns false, then we&rsquo;ll halt (or end) our new program, which we will name &ldquo;Program X&rdquo;.</p>
+
+<center><img src="https://qph.ec.quoracdn.net/main-qimg-a96f86bb0e791c611694e2885502d2c3.webp"></center>
+
+
+<p><strong>Program X</strong></p>
+
+<p>Now, here&rsquo;s the kicker.  What would happen if we fed Program X into itself? In other words, what if we ran Program X and gave it Program X as the parameter?</p>
+
+<center>PROGRAM X</center>
+
+
+<center>|</center>
+
+
+<center>v</center>
+
+
+<center><img src="https://qph.ec.quoracdn.net/main-qimg-a96f86bb0e791c611694e2885502d2c3.webp"></center>
+
+
+<center>|</center>
+
+
+<center>v</center>
+
+
+<center>???????</center>
+
+
+<p><br>
+So, now if the program doesn&rsquo;t halt, then it halts.  But if it DOES halt, then it doesn&rsquo;t halt.  What the hell?</p>
+
+<p>What we have done is created a paradox, and in doing so proven that the answer to the question is undecidable, or it is neither true nor false.  We can then conclude that our assumption that there exists a program which can answer the question of &ldquo;Does It Halt?&rdquo; must also be false.</p>
+
+<p><strong>We can then conclude that given a program and a computer, it is not possible to create a program that can tell you whether that program on that given machine will run forever, or eventually give you an answer.</strong></p>
+
+<p>Sources:</p>
+
+<ul>
+ <li>http://faculty.otterbein.edu/PSanderson/csc150/notes/chapter11.html</li>
+<li>https://plato.stanford.edu/entries/turing-machine/</li>
+<li>https://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/turing-machine/one.html</li>
+<li>http://danielschlegel.org/teaching/111/lecture4.html</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -860,6 +1083,10 @@ What is the 10,001st prime number?</strong></p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/05/29/turing-machines-and-the-halting-problem/">Turing Machine's and the Halting Problem</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2017/05/07/apis-in-rails-5/">Protecting Against SQL Injection in Rails</a>
